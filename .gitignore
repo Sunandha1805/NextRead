@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment variables
+.env
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Data and Vector DB (Specific to this project)
+backend/data/*.csv
+backend/data/*.txt
+backend/data/chroma_db_bge/
+notebook/*.csv
+notebook/*.txt
+notebook/chroma_db_bge/
+notebook/untitled.txt
+
+# OS specific files
+.DS_Store
+Thumbs.db
+desktop.ini
