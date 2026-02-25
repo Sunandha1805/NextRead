@@ -29,6 +29,8 @@ db_books = Chroma(
 
 # Load the CSV with the pre-calculated emotion scores
 books_emotions = pd.read_csv(os.path.join(data_path, "books_with_emotions.csv"))
+placeholder = "https://www.forewordreviews.com/books/covers/28-business-thinkers-who-changed-the-world.jpg"
+books_emotions["thumbnail"] = books_emotions["thumbnail"].fillna(placeholder)
 
 # 3. THE RECOMMENDATION FUNCTION
 def get_recommendations(query, category=None, emotion=None, k=10):
@@ -54,5 +56,6 @@ def get_recommendations(query, category=None, emotion=None, k=10):
     if emotion and emotion in recs.columns:
         recs = recs.sort_values(by=emotion, ascending=False)
         
-    # Return the top 16 results as list of dictionaries for React to read
-    return recs.head(16).to_dict('records')
+    # returning k recommended books
+    cols_to_return = ['title', 'authors', 'thumbnail']
+    return recs.head(k)[cols_to_return].to_dict('records')
