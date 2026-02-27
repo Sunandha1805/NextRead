@@ -1,0 +1,5 @@
+/* Reset Vite defaults that can interfere with our layout */
+body {
+  margin: 0;
+  padding: 0;
+}
