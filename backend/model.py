@@ -11,7 +11,7 @@ class RecommendationRequest(BaseModel):
     query: str
     category: Optional[str] = None
     emotion: Optional[str] = None
-    k: int = 10
+    k: int = 16
 
 # 2. THE ENGINE SETUP (Runs once when server starts)
 load_dotenv()
@@ -33,7 +33,7 @@ placeholder = "https://www.forewordreviews.com/books/covers/28-business-thinkers
 books_emotions["thumbnail"] = books_emotions["thumbnail"].fillna(placeholder)
 
 # 3. THE RECOMMENDATION FUNCTION
-def get_recommendations(query, category=None, emotion=None, k=10):
+def get_recommendations(query, category=None, emotion=None, k=16):
     # STEP A: Semantic Search
     # Get the top 50 most similar books from the vector database
     docs = db_books.similarity_search(query, k=50)
