@@ -1,44 +1,74 @@
-# Python
+# ==========================================
+#  NextRead — .gitignore
+# ==========================================
+
+# ---------- Python ----------
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
-env/
-venv/
-.venv/
+*.egg
+*.egg-info/
+.eggs/
+.installed.cfg
 build/
 develop-eggs/
 dist/
 downloads/
 eggs/
-.eggs/
 lib/
 lib64/
 parts/
 sdist/
 var/
-*.egg-info/
-.installed.cfg
-*.egg
 
-# Environment variables
+# Virtual environments
+.venv/
+venv/
+env/
+
+# ---------- Environment Variables ----------
 .env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
 
-# Jupyter Notebook
+# ---------- Jupyter Notebook ----------
 .ipynb_checkpoints/
-*/.ipynb_checkpoints/*
 
-# Data and Vector DB (Specific to this project)
+# ---------- Data & Vector DB ----------
 backend/data/*.csv
 backend/data/*.txt
 backend/data/chroma_db_bge/
 notebook/*.csv
 notebook/*.txt
 notebook/chroma_db_bge/
-notebook/untitled.txt
 
-# OS specific files
+# ---------- Node / React (Frontend) ----------
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# ---------- IDE / Editor ----------
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ---------- OS ----------
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# ---------- Logs ----------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
