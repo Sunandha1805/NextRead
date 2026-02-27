@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from model import get_recommendations, RecommendationRequest
@@ -21,6 +21,10 @@ app.add_middleware(
 @app.get("/")
 async def root():
     return {"message": "Welcome to the NextRead API"}
+
+@app.get("/favicon.ico")
+async def favicon():
+    return Response(status_code=204)
 
 @app.post("/recommend")
 async def recommend_books(request: RecommendationRequest):
