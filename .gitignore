@@ -40,9 +40,7 @@ backend/.env.*
 .ipynb_checkpoints/
 
 # ---------- Data & Vector DB ----------
-backend/data/*.csv
-backend/data/*.txt
-backend/data/chroma_db_bge/
+# backend/data/ is tracked (needed for Render deployment)
 notebook/*.csv
 notebook/*.txt
 notebook/chroma_db_bge/
