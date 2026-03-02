@@ -43,11 +43,24 @@ def init_models():
     books_emotions["thumbnail"] = books_emotions["thumbnail"].fillna(placeholder)
     print("Models and Data loaded successfully!")
 
+# Predefined broad categories in the dataset
+VALID_CATEGORIES = {'Fiction', 'Nonfiction', "Children's Fiction", "Children's Nonfiction"}
+
 # 3. THE RECOMMENDATION FUNCTION
 def get_recommendations(query, category=None, emotion=None, k=16):
     # STEP A: Semantic Search
+    # If category is not a predefined one, enhance the query with it
+    search_query = query
+    filter_category = None
+    if category:
+        if category in VALID_CATEGORIES:
+            filter_category = category
+        else:
+            # Use the category as part of the semantic search (e.g. "business", "science")
+            search_query = f"{category} {query}"
+    
     # Get the top 50 most similar books from the vector database
-    docs = db_books.similarity_search(query, k=50)
+    docs = db_books.similarity_search(search_query, k=50)
     
     # STEP B: Extract ISBNs
     # In your DB, the ISBN is the first part of the page content
@@ -58,9 +71,9 @@ def get_recommendations(query, category=None, emotion=None, k=16):
     # Pull the full book details for these specific ISBNs
     recs = books_emotions[books_emotions["isbn13"].isin(isbns)].copy()
     
-    # STEP D: Filtering (By Category)
-    if category:
-        recs = recs[recs['simple_categories'] == category]
+    # STEP D: Filtering (By Category — only if it's a predefined one)
+    if filter_category:
+        recs = recs[recs['simple_categories'] == filter_category]
     
     # STEP E: Sorting (By Emotional Tone)
     # If the user wants 'joyful' books, sort by the 'joy' column (highest score first)
