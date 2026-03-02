@@ -3,8 +3,6 @@ import pandas as pd
 from typing import Optional, List
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_chroma import Chroma
 
 # 1. THE DATA CONTRACT (What the API accepts)
 class RecommendationRequest(BaseModel):
@@ -13,24 +11,37 @@ class RecommendationRequest(BaseModel):
     emotion: Optional[str] = None
     k: int = 16
 
-# 2. THE ENGINE SETUP (Runs once when server starts)
+# 2. THE ENGINE SETUP (Lazy-loaded so uvicorn can bind the port first)
 load_dotenv()
 current_dir = os.path.dirname(os.path.abspath(__file__))
 data_path = os.path.join(current_dir, "data")
 
-print("Loading AI Models and Data...")
-embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-small-en-v1.5")
+# Global references — initialized in init_models()
+embeddings = None
+db_books = None
+books_emotions = None
 
-# Open the Vector DB we created in the notebook
-db_books = Chroma(
-    persist_directory=os.path.join(data_path, "chroma_db_bge"), 
-    embedding_function=embeddings
-)
+def init_models():
+    """Load AI models and data. Called once during FastAPI startup (after port is bound)."""
+    global embeddings, db_books, books_emotions
 
-# Load the CSV with the pre-calculated emotion scores
-books_emotions = pd.read_csv(os.path.join(data_path, "books_with_emotions.csv"))
-placeholder = "https://www.forewordreviews.com/books/covers/28-business-thinkers-who-changed-the-world.jpg"
-books_emotions["thumbnail"] = books_emotions["thumbnail"].fillna(placeholder)
+    from langchain_huggingface import HuggingFaceEmbeddings
+    from langchain_chroma import Chroma
+
+    print("Loading AI Models and Data...")
+    embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-small-en-v1.5")
+
+    # Open the Vector DB we created in the notebook
+    db_books = Chroma(
+        persist_directory=os.path.join(data_path, "chroma_db_bge"), 
+        embedding_function=embeddings
+    )
+
+    # Load the CSV with the pre-calculated emotion scores
+    books_emotions = pd.read_csv(os.path.join(data_path, "books_with_emotions.csv"))
+    placeholder = "https://www.forewordreviews.com/books/covers/28-business-thinkers-who-changed-the-world.jpg"
+    books_emotions["thumbnail"] = books_emotions["thumbnail"].fillna(placeholder)
+    print("Models and Data loaded successfully!")
 
 # 3. THE RECOMMENDATION FUNCTION
 def get_recommendations(query, category=None, emotion=None, k=16):

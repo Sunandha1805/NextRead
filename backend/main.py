@@ -1,12 +1,24 @@
 import os
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from model import get_recommendations, RecommendationRequest
+from model import get_recommendations, RecommendationRequest, init_models
 
 load_dotenv()
 
-app = FastAPI(title="NextRead API", description="ML based book recommender")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: load models AFTER the port is bound
+    init_models()
+    yield
+    # Shutdown: cleanup if needed
+
+app = FastAPI(
+    title="NextRead API",
+    description="ML based book recommender",
+    lifespan=lifespan
+)
 
 frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
 
@@ -47,5 +59,3 @@ async def recommend_books(request: RecommendationRequest):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
-
-    
